@@ -3,25 +3,29 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HelperController;
 use Illuminate\Http\Request;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller
+class AuthController extends HelperController
 {
     public function signup(Request $request)
     {
-        $request->validate([
+        $rules = [
             'email'       => 'required|string|email|unique:users',
             'password'    => 'required|string|confirmed',
-            'first_name'  => 'required|string',
-            'last_name'   => 'required|string',
-        ]);
+            'username'  => 'required|string|unique:users',
+        ];
+
+        if($this->jgmo($request, $rules)){
+            return $this->jgmo($request, $rules);
+        }
+
         $user = new User([
             'email'    => $request->email,
-            'last_name'    => $request->last_name,
-            'first_name'    => $request->first_name,
+            'username'    => $request->username,
             'password' => bcrypt($request->password),
         ]);
         $user->save();
@@ -31,15 +35,21 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $rules = [
             'email'       => 'required|string|email',
             'password'    => 'required|string',
             'remember_me' => 'boolean',
-        ]);
+        ];
+
+        if($this->jgmo($request, $rules)){
+            return $this->jgmo($request, $rules);
+        }
+
         $credentials = request(['email', 'password']);
         if (!Auth::attempt($credentials)) {
+
             return response()->json([
-                'message' => 'Unauthorized'], 401);
+                'errors' => ['Email o Credencial incorrecta.']], 422);
         }
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
