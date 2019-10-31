@@ -10,6 +10,7 @@ class Credential extends Model
         'folder_id',
         'name',
         'url',
-        'credential'
+        'credential',
+        'slug'
     ];
 }

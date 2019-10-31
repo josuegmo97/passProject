@@ -51,11 +51,11 @@ class FolderController extends HelperController
         $this->validate($request, $rules);
 
         // Busco la carpeta
-        $credential = Folder::where('user_id', Auth::user()->id)->where('slug', $request->slug)->first();
+        $folder = Folder::where('user_id', Auth::user()->id)->where('slug', $request->slug)->first();
 
-        $credential->name = $request->name;
-        $credential->slug = $this->slug_generate($request->name);
-        $credential->update();
+        $folder->name = $request->name;
+        $folder->slug = $this->slug_generate($request->name);
+        $folder->update();
 
         return $this->showMessage('Update');
     }
@@ -69,13 +69,13 @@ class FolderController extends HelperController
         $this->validate($request, $rules);
 
         // Busco la carpeta y elimino
-        $credential = Folder::where('user_id', Auth::user()->id)->where('slug', $request->slug)->first()->delete();
+        Folder::where('user_id', Auth::user()->id)->where('slug', $request->slug)->first()->delete();
 
         return $this->showMessage('Delete');
     }
 
     // Creo slug unico
-    private function slug_generate($name)
+    public function slug_generate($name)
     {
         // id user
         $user_id = Auth::user()->id;

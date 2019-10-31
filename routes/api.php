@@ -24,4 +24,6 @@ Route::group(['prefix' => 'folder'], function () {
 Route::group(['prefix' => 'credentials'], function () {
     Route::get('/{slug}', 'Credential\CredentialController@index');   // Muestra todas las credenciales de una carpeta.
     Route::post('/create', 'Credential\CredentialController@store');   // Crea nueva credencial
+    Route::post('/update', 'Credential\CredentialController@update');   // Actualizo credencial
+    Route::post('/delete', 'Credential\CredentialController@destroy');   // Elimino credencial
 });

@@ -20,6 +20,7 @@ class CreateCredentialsTable extends Migration
             $table->string('name')->nullable();
             $table->string('url')->nullable();
             $table->string('credential')->nullable();
+            $table->string('slug')->nullable();
 
             $table->foreign('folder_id')->references('id')->on('folders')->onDelete('cascade');
 

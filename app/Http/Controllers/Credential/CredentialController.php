@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Credential;
 use App\Credential;
 use App\Folder;
 use App\Http\Controllers\HelperController;
+use App\Http\Controllers\Folder\FolderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,15 +31,18 @@ class CredentialController extends HelperController
         return response()->json($credentials->credentials, 200);
     }
 
-    // Nueva credentials
+    // Nueva credential
     public function store(Request $request)
     {
+        // Extiendo el creador de slug para no repetir codigo
+        $generate = new FolderController;
+
         // Validacion
         $rules = [
             'slug' => 'required|string',
             'name' => 'required|string',
             'url'  => 'required|string',
-            'credential' => 'required|string',            
+            'pwCredential' => 'required|string',
         ];
 
         $this->validate($request, $rules);
@@ -51,9 +55,60 @@ class CredentialController extends HelperController
             'folder_id'   => $credential->id,
             'name'        => $request->name,
             'url'         => $request->url,
-            'credential'  => $request->credential
+            'credential'  => $request->pwCredential,
+            'slug'        => $generate->slug_generate($request->name)
         ]);
 
         return $this->showMessage('Save');
+    }
+
+    // Editar credential
+    public function update(Request $request)
+    {
+        // Extiendo el creador de slug para no repetir codigo
+        $generate = new FolderController;
+
+        // Validacion
+        $rules = [
+            'slug' => 'required|string'
+        ];
+
+        $this->validate($request, $rules);
+
+        // La credencial a actualizar
+        $credential = Credential::where('slug', $request->slug)->first();
+
+        // Valido que exista
+        if(!$credential)
+        {
+            return $this->errorResponse('Error Ocurried', 401);
+        }
+
+        // Si hay cambio en el nombre, actualizo slug y nombre
+        if($request->name)
+        {
+            $credential->name = $request->name;
+            $credential->slug = $generate->slug_generate($request->name);
+        }
+
+        // Si hay cambio en el pwCredential, actualizo credential
+        if($request->pwCredential)
+        {
+            $credential->pwCredential = $request->pwCredential;
+        }
+    }
+
+    // Eliminar Credencial
+    public function destroy(Request $request)
+    {
+        // Validacion
+        $rules = ['slug' => 'required|string'];
+
+        $this->validate($request, $rules);
+
+        // Busco la credencial y elimino
+        Credential::where('slug', $request->slug)->first()->delete();
+
+        return $this->showMessage('Delete');
     }
 }
