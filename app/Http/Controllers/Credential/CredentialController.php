@@ -98,11 +98,20 @@ class CredentialController extends HelperController
             $credential->slug = $generate->slug_generate($request->name);
         }
 
+        if($request->url)
+        {
+            $credential->url = $request->url;
+        }
+
         // Si hay cambio en el pwCredential, actualizo credential
         if($request->pwCredential)
         {
-            $credential->pwCredential = $request->pwCredential;
+            $credential->credential = $request->pwCredential;
         }
+
+        $credential->update();
+
+        return $this->showMessage('Actualizado');
     }
 
     // Eliminar Credencial
