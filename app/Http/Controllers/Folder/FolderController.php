@@ -19,9 +19,14 @@ class FolderController extends HelperController
     public function index()
     {
         // Busco la lista de carpetas del usuario autenticado
-        $user_folders = User::find(Auth::user()->id);
+        $user_folders = User::find(Auth::user()->id)->folders;
 
-        return response()->json($user_folders->folders, 200);
+        // Agrego elemento extra del conteo de las credenciales por carpeta.
+        $user_folders->map(function($cre){
+            $cre->count_credentials = $cre->credentials->count();
+        });
+
+        return response()->json($user_folders, 200);
     }
 
     // Nueva Carpeta
@@ -30,7 +35,10 @@ class FolderController extends HelperController
         // Validacion
         $rules = ['name' => 'required|string'];
 
-        $this->validate($request, $rules);
+        if($this->jgmo($request, $rules))
+        {
+            return $this->jgmo($request, $rules);
+        }
 
         // Creo la carpeta del usuario
         Folder::create([

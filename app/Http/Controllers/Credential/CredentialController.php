@@ -30,7 +30,6 @@ class CredentialController extends HelperController
 
         $credentials->credentials->map(function($cre){
             $cre->view = false;
-
         });
 
         return response()->json($credentials->credentials, 200);
