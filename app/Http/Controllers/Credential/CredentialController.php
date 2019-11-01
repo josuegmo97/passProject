@@ -28,6 +28,11 @@ class CredentialController extends HelperController
             return $this->errorResponse('Unknown folder', 404);
         }
 
+        $credentials->credentials->map(function($cre){
+            $cre->view = false;
+
+        });
+
         return response()->json($credentials->credentials, 200);
     }
 
@@ -45,7 +50,10 @@ class CredentialController extends HelperController
             'pwCredential' => 'required|string',
         ];
 
-        $this->validate($request, $rules);
+        if($this->jgmo($request, $rules))
+        {
+            return $this->jgmo($request, $rules);
+        }
 
         // Busco la carpeta por medio del slug
         $credential = Folder::where('user_id', Auth::user()->id)->where('slug', $request->slug)->first();
