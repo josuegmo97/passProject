@@ -6,6 +6,7 @@ use App\Credential;
 use App\Folder;
 use App\Http\Controllers\HelperController;
 use App\Http\Controllers\Folder\FolderController;
+use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,8 @@ class CredentialController extends HelperController
     public function index($slug)
     {
         // Busco la lista de credenciales de la carpeta
-        $credentials = Folder::where('user_id', Auth::user()->id)->where('slug', $slug)->first();
+        // $credentials = Folder::where('user_id', Auth::user()->id)->where('slug', $slug)->first();
+        $credentials = Folder::where('slug', $slug)->first();
 
         // Valido que exista
         if(!$credentials)
@@ -38,6 +40,12 @@ class CredentialController extends HelperController
     // Nueva credential
     public function store(Request $request)
     {
+        // Middleware fast
+        if(Auth::user()->role_id != Role::ADMIN)
+        {
+            return $this->errorResponse('No tienes permiso de administrador.');
+        }
+
         // Extiendo el creador de slug para no repetir codigo
         $generate = new FolderController;
 
@@ -72,6 +80,12 @@ class CredentialController extends HelperController
     // Editar credential
     public function update(Request $request)
     {
+        // Middleware fast
+        if(Auth::user()->role_id != Role::ADMIN)
+        {
+            return $this->errorResponse('No tienes permiso de administrador.');
+        }
+
         // Extiendo el creador de slug para no repetir codigo
         $generate = new FolderController;
 
@@ -117,6 +131,12 @@ class CredentialController extends HelperController
     // Eliminar Credencial
     public function destroy(Request $request)
     {
+        // Middleware fast
+        if(Auth::user()->role_id != Role::ADMIN)
+        {
+            return $this->errorResponse('No tienes permiso de administrador.');
+        }
+        
         // Validacion
         $rules = ['slug' => 'required|string'];
 

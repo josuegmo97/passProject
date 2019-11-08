@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Folder;
 
 use App\Folder;
 use App\Http\Controllers\HelperController;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,19 +20,26 @@ class FolderController extends HelperController
     public function index()
     {
         // Busco la lista de carpetas del usuario autenticado
-        $user_folders = User::find(Auth::user()->id)->folders;
+        // $folders = User::find(Auth::user()->id)->folders; //viejo
+        $folders = Folder::all();
 
         // Agrego elemento extra del conteo de las credenciales por carpeta.
-        $user_folders->map(function($cre){
+        $folders->map(function($cre){
             $cre->count_credentials = $cre->credentials->count();
         });
 
-        return response()->json($user_folders, 200);
+        return response()->json($folders, 200);
     }
 
     // Nueva Carpeta
     public function store(Request $request)
     {
+        // Middleware fast
+        if(Auth::user()->role_id != Role::ADMIN)
+        {
+            return $this->errorResponse('No tienes permiso de administrador.');
+        }
+
         // Validacion
         $rules = ['name' => 'required|string'];
 
@@ -53,6 +61,12 @@ class FolderController extends HelperController
     // Editar Nombre de Carpeta
     public function update(Request $request)
     {
+        // Middleware fast
+        if(Auth::user()->role_id != Role::ADMIN)
+        {
+            return $this->errorResponse('No tienes permiso de administrador.');
+        }
+
         // Validacion
         $rules = ['slug' => 'required|string', 'name' => 'required|string'];
 
@@ -71,6 +85,12 @@ class FolderController extends HelperController
     // Eliminar Carpeta
     public function destroy(Request $request)
     {
+        // Middleware fast
+        if(Auth::user()->role_id != Role::ADMIN)
+        {
+            return $this->errorResponse('No tienes permiso de administrador.');
+        }
+        
         // Validacion
         $rules = ['slug' => 'required|string'];
 

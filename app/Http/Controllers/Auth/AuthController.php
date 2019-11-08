@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HelperController;
+use App\Role;
 use Illuminate\Http\Request;
 use App\User;
 use Carbon\Carbon;
@@ -27,6 +28,7 @@ class AuthController extends HelperController
             'email'    => $request->email,
             'username'    => $request->username,
             'password' => bcrypt($request->password),
+            'role_id' => Role::GENERAL
         ]);
         $user->save();
         return response()->json([

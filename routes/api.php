@@ -27,3 +27,14 @@ Route::group(['prefix' => 'credentials'], function () {
     Route::post('/update', 'Credential\CredentialController@update');   // Actualizo credencial
     Route::post('/delete', 'Credential\CredentialController@destroy');   // Elimino credencial
 });
+
+// Users
+Route::group(['prefix' => 'users'], function () {
+    Route::get('/', 'User\UserController@index');   // Muestra todos los usuarios.
+    Route::post('/update', 'User\UserController@change_role');   // Actualizo rol
+});
+
+// Csv
+Route::group(['prefix' => 'csv'], function () {
+    Route::post('/', 'Csv\CsvController@startDownloadCSV');   // Generar csv
+});

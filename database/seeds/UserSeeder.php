@@ -1,5 +1,6 @@
 <?php
 
+use App\Role;
 use App\User;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +18,8 @@ class UserSeeder extends Seeder
             User::create([
                 'username' => 'Administrador',
                 'email'    => 'admin@admin.com',
-                'password' => bcrypt('123456789.')
+                'password' => bcrypt('123456789.'),
+                'role_id'  => Role::ADMIN
             ]);
         }
     }

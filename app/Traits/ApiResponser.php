@@ -14,7 +14,11 @@ trait ApiResponser{
     }
 
     protected function errorResponse($message, $code = 422){
-        return response()->json(['errors'=>$message, 'code' => $code], $code);
+
+        $data = [];
+        $data[] = $message;
+
+        return response()->json(['errors'=>$data, 'code' => $code], $code);
     }
 
     protected function showAll(Collection $collection, $code = 200){
