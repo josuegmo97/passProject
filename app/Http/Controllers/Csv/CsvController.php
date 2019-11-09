@@ -22,31 +22,22 @@ class CsvController extends Controller
         // $filePath = public_path($fileName);
         $file = fopen($fileName, 'w');
 
-        // Llenar archivo con la informacion de los contactos.
-                $products = [];
-                $product1['name'] = 'Gabriel';
-                $product1['description'] = 'kionda';
-                $product1['prince'] = '2111';
-                $products[] = $product1;
-
-                $product2['name'] = 'Osuna';
-                $product2['description'] = 'kiiii';
-                $product2['prince'] = '2112312311';
-                $products[] = $product2;
-
-                // dd($this->products);
-        $data = [];
+        $datas = [];
         $all = [];
-        foreach($folders as $id => $product)
+        foreach($folders as $folder)
         {
-            $all['name'] = $product->name;
-            $all['url'] = $product->url;
-            $all['credential'] = $product->credential;
+            $all["nombre"] = $folder->name;
+            $all["url"] = $folder->url;
+            $all["credencial"] = $folder->credential;
             
-            $data[] = $all;
-            // return response()->json(['data' => $this->products->toString()]);
+            $datas[] = $all;
         }
-        fputcsv($file, $data);
+
+        // Llenar archivo con la informacion de los contactos.
+        foreach($datas as $data)
+        {
+            fputcsv($file, $data);
+        }
 
         // Generar 1 descarga.
         return response()->download($fileName);
